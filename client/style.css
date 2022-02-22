@@ -1,0 +1,35 @@
+* {
+    padding: 0rem;
+    margin: 0rem;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+body {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #272727;
+}
+
+/* ==================================== */
+
+#screen {
+    height: 500px;
+    width: 500px;
+    border: solid 4px #000000;
+    background: white;
+}
+
+canvas {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    
+}
