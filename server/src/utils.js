@@ -10,14 +10,18 @@ module.exports = {
     },
 
     generateFruitPos() {
+        let canvasSize = 500
+        let speed = 25
+        let entitySize = 25
+
         function randint(min, max) {
             return Math.random() * (max - min) + min;
         }
 
-        let size = (this.canvasSize - this.entitySize) / this.speed
+        let size = (canvasSize - entitySize) / speed
         const multiples = [];
 
-        for (let i = this.speed; i <= this.speed * size; i += this.speed){
+        for (let i = speed; i <= speed * size; i += speed){
             multiples.push(i);
         };
 

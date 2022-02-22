@@ -1,4 +1,3 @@
-
 class Game {
     constructor(root) {
         this.id = ''
@@ -17,8 +16,8 @@ class Game {
         this.canvasSize = root.width
         this.entitySize = 25
 
-        this.fruit_px = this.generateFruitPos()
-        this.fruit_py = this.generateFruitPos()
+        this.fruit_px = 0
+        this.fruit_py = 0
 
         this.frames = 100
 
@@ -31,6 +30,34 @@ class Game {
         this.setRenderFps()
     }
 
+    renderScoreboard() {
+        let container = document.querySelector('.players-container')
+
+        let element = '<h1 class = "title">Placar</h1>'
+
+        console.log(this.players)
+
+        for (let i in this.players) {
+            if (i == this.id) {
+                element += `
+                <div class = 'player active-player'>
+                    <p>Player: ${this.id.slice(0, 10)}</p>
+                    <p>Pontos: ${this.players[i].points}</p>
+                </div>
+                `
+            } else {
+                element += `
+                <div class = 'player default-player'>
+                    <p>Player: ${this.id.slice(0, 10)}</p>
+                    <p>Pontos: ${this.players[i].points}</p>
+                </div>
+                `
+            }
+        }
+        
+        container.innerHTML = element
+    }
+
     async connectSocket() {
         let options = {
             method: 'POST',
@@ -38,19 +65,28 @@ class Game {
         }
 
         let response = await fetch('http://localhost:3000/loginUser', options)
-        let {id, players} = await response.json()
+        let {id, players, fruit} = await response.json()
         this.id = id
         this.players = players
-
+        this.fruit_px = fruit.pos.x
+        this.fruit_py = fruit.pos.y
+        
+        this.renderScoreboard()
 
         this.socket = io('http://localhost:3000',  { transports : ['websocket'], query: {id: this.id} })
-
         this.handleSocketEvents()
     }
 
     handleSocketEvents() {
         this.socket.on('updatePlayers', (players) => {
             this.players = players
+        
+            this.renderScoreboard()
+        })
+
+        this.socket.on('updateFruit', (fruit) => {
+            this.fruit_px = fruit.pos.x
+            this.fruit_py = fruit.pos.y
         })
     }
 
@@ -63,13 +99,6 @@ class Game {
 
     render() {
         this.ctx.clearRect(0, 0, 500, 500)
-
-        if (this.restart_fruit) {
-            this.fruit_px = this.generateFruitPos()
-            this.fruit_py = this.generateFruitPos()
-            
-            this.restart_fruit = false
-        }
 
         this.ctx.fillStyle = '#FF0096'
         this.ctx.fillRect(this.fruit_px, this.fruit_py, this.entitySize, this.entitySize)
@@ -119,28 +148,12 @@ class Game {
             update = true
         }
 
-        this.socket.emit('updatePlayerPos', {id: this.id, pos: {x: this.px, y: this.py}})
-
-        if (this.py == this.fruit_py && this.px == this.fruit_px) {
-            this.restart_fruit = true
+        if (update) {
+            this.socket.emit('updatePlayerPos', {id: this.id, pos: {x: this.px, y: this.py}})
         }
     }
 
-    generateFruitPos() {
-        function randint(min, max) {
-            return Math.random() * (max - min) + min;
-        }
-
-        let size = (this.canvasSize - this.entitySize) / this.speed
-        const multiples = [];
-
-        for (let i = this.speed; i <= this.speed * size; i += this.speed){
-            multiples.push(i);
-        };
-
-        let pos = multiples[Math.floor(randint(0, size))]
-        return pos
-    }
+    
 }
 
 
@@ -151,7 +164,6 @@ GameInstance.init()
 document.addEventListener('keydown', ({key}) => {
     GameInstance.moveEntity(key)
 })
-
 
 const multiples = (num, size) => {
     const res = [];

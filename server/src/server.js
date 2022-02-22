@@ -13,7 +13,7 @@ app.use(express.json());
 
 let players = {}
 
-let fruit = {pos: {x: 250, y: 250}}
+let fruit = {pos: {x: utils.generateFruitPos(), y: utils.generateFruitPos()}}
 
 io.on('connection', async (socket) => {
     let socket_id = await socket.id
@@ -32,7 +32,17 @@ io.on('connection', async (socket) => {
 
         players[player_id].pos = data.pos
 
-        socket.broadcast.emit('updatePlayers', players)
+        
+        if (players[player_id].pos.x == fruit.pos.x && players[player_id].pos.y == fruit.pos.y) {
+            players[player_id].points++
+            
+            fruit.pos.x = utils.generateFruitPos()
+            fruit.pos.y = utils.generateFruitPos()
+            
+            io.emit('updateFruit', fruit)
+        }
+
+        io.emit('updatePlayers', players)
     })
 
     socket.on('disconnect', () => {

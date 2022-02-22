@@ -22,7 +22,9 @@ body {
 #screen {
     height: 500px;
     width: 500px;
-    border: solid 4px #000000;
+    border: solid 4px #000000d8;
+    box-shadow: 0px 0px 60px rgba(255, 255, 255, 0.198);
+    border-radius: 3px;
     background: white;
 }
 
@@ -31,5 +33,52 @@ canvas {
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
-    
+}
+
+/* =========================================== */
+
+.players-container {
+    width: 250px;
+    height: 500px;
+    margin-left: 40px;
+
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.title {
+    color: white;
+    text-decoration: underline;
+
+}
+
+.player {
+    width: 100%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+
+}
+
+/* ===================================== */
+
+.default-player p:nth-child(2) {
+    color: rgb(255, 255, 255);
+    font-weight: 600;
+}
+
+.default-player p:nth-child(1) {
+    color: rgba(255, 255, 255, 0.835);
+}
+
+/* ========================================== */
+
+.active-player p:nth-child(2) {
+    color: #3D85C6 !important;
+    font-weight: 600;
+}
+
+.active-player p:nth-child(1) {
+    color: #3d86c6b7 !important;
 }
